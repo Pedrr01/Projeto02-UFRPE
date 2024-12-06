@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="img/iconNav.png" type="image/x-icon">
     <title>CampusLink - Disciplina</title>
     <style>
         body {
@@ -31,7 +30,7 @@
         }
         .tab {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
         .tab button {
@@ -42,6 +41,9 @@
             border-radius: 10px;
             cursor: pointer;
             transition: background 0.3s;
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
         }
         .tab button:hover {
             background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
@@ -55,12 +57,15 @@
         .tab-content.active {
             display: block;
         }
-        input, input[type="file"] {
+        input, input[type="file"], textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border-radius: 10px;
             border: none;
+        }
+        textarea {
+            height: 150px;
         }
         input[type="file"] {
             background-color: #f0f0f0;
@@ -86,7 +91,204 @@
         button.publish-btn:hover {
             background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
         }
+        .item-list {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .item a {
+            color: #f0f0f0;
+            text-decoration: none;
+        }
+        .center-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .visualizar-btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            position: relative;
+            bottom: 0;
+        }
+        .visualizar-btn-container button {
+            background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .visualizar-btn-container button:hover {
+            background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
+        }
     </style>
+    <script>
+        // Função para armazenar as publicações
+        function armazenarPublicacao(tipo, titulo, conteudo) {
+            let publicacoes = JSON.parse(localStorage.getItem('publicacoes')) || [];
+
+            publicacoes.push({
+                tipo: tipo,
+                titulo: titulo,
+                conteudo: conteudo
+            });
+
+            localStorage.setItem('publicacoes', JSON.stringify(publicacoes));
+        }
+
+        // Função para exibir as publicações
+        function exibirPublicacoes() {
+            let publicacoes = JSON.parse(localStorage.getItem('publicacoes')) || [];
+            let container = document.getElementById('visualizar-publicacoes');
+            container.innerHTML = '';
+
+            publicacoes.forEach(function(publicacao) {
+                let item = document.createElement('div');
+                item.classList.add('item');
+
+                let titulo = document.createElement('h3');
+                titulo.textContent = publicacao.titulo;
+                item.appendChild(titulo);
+
+                if (publicacao.tipo === 'link') {
+                    let link = document.createElement('a');
+                    link.href = publicacao.conteudo;
+                    link.target = "_blank";
+                    link.textContent = "Acessar Link";
+                    item.appendChild(link);
+                } else if (publicacao.tipo === 'comentario') {
+                    let comentario = document.createElement('p');
+                    comentario.textContent = publicacao.conteudo;
+                    item.appendChild(comentario);
+                } else if (publicacao.tipo === 'arquivo') {
+                    let linkArquivo = document.createElement('a');
+                    linkArquivo.href = publicacao.conteudo;
+                    linkArquivo.target = "_blank";
+                    linkArquivo.textContent = "Baixar Arquivo";
+                    item.appendChild(linkArquivo);
+                }
+
+                container.appendChild(item);
+            });
+            // Torna a aba de publicações visível
+            document.getElementById('visualizar-publicacoes').style.display = "block";
+        }
+
+        // Função de manipulação do formulário de publicações
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                let tipo = form.id; // Pode ser 'link', 'comentario' ou 'arquivo'
+                let titulo = form.querySelector('[name^="titulo"]').value;
+                let conteudo = form.querySelector('[name^="conteudo"]').value;
+
+                if (form.querySelector('[type="file"]')) {
+                    conteudo = URL.createObjectURL(form.querySelector('[type="file"]').files[0]);
+                }
+
+                armazenarPublicacao(tipo, titulo, conteudo);
+                form.reset();
+            });
+        });
+
+        // Função para mostrar as publicações ao clicar no botão
+        document.querySelector('.visualizar-btn-container button').addEventListener('click', function() {
+            exibirPublicacoes();
+        });
+    </script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>CampusLink - Disciplina</h1>
+        <button onclick="window.location.href='/feed'" class="publish-btn">Voltar</button>
+    </div>
+
+    <div class="container">
+
+        <div class="tab">
+            <button class="tablink" onclick="openTab(event, 'link')">Link</button>
+            <button class="tablink" onclick="openTab(event, 'comentario')">Comentário</button>
+            <button class="tablink" onclick="openTab(event, 'arquivo')">Arquivo</button>
+        </div>
+
+        <!-- Aba para links -->
+        <div id="link" class="tab-content">
+            <h2>Publicar Link</h2>
+            <form id="link" method="POST">
+                <label for="titulo_link">Título do Link:</label>
+                <input type="text" name="titulo_link" placeholder="Título" required><br>
+
+                <label for="conteudo_link">Conteúdo do Link:</label>
+                <input type="url" name="conteudo_link" placeholder="URL do link" required><br>
+
+                <button type="submit" class="publish-btn">Publicar</button>
+            </form>
+
+            <div class="item-list">
+                <!-- Publicações de link serão exibidas aqui -->
+            </div>
+        </div>
+
+        <!-- Aba para comentários -->
+        <div id="comentario" class="tab-content">
+            <h2>Publicar Comentário</h2>
+            <form id="comentario" method="POST">
+                <label for="titulo_comentario">Título do Comentário:</label>
+                <input type="text" name="titulo_comentario" placeholder="Título" required><br>
+
+                <label for="conteudo_comentario">Conteúdo do Comentário:</label>
+                <textarea name="conteudo_comentario" placeholder="Comentário" required></textarea><br>
+
+                <button type="submit" class="publish-btn">Publicar</button>
+            </form>
+
+            <div class="item-list">
+                <!-- Publicações de comentário serão exibidas aqui -->
+            </div>
+        </div>
+
+        <!-- Aba para arquivos -->
+        <div id="arquivo" class="tab-content">
+            <h2>Publicar Arquivo</h2>
+            <form id="arquivo" method="POST">
+                <label for="titulo_arquivo">Título do Arquivo:</label>
+                <input type="text" name="titulo_arquivo" placeholder="Título" required><br>
+
+                <label for="conteudo_arquivo">Arquivo:</label>
+                <input type="file" name="conteudo_arquivo" required><br>
+
+                <button type="submit" class="publish-btn">Publicar</button>
+            </form>
+
+            <div class="item-list">
+                <!-- Publicações de arquivos serão exibidas aqui -->
+            </div>
+        </div>
+
+        <!-- Botão para visualizar as publicações -->
+        <div class="visualizar-btn-container">
+            <button>Visualizar Publicações</button>
+        </div>
+
+        <!-- Página para visualizar publicações -->
+        <div id="visualizar-publicacoes" class="tab-content" style="display: none;">
+            <h2>Publicações</h2>
+            <!-- As publicações serão inseridas aqui -->
+        </div>
+
+    </div>
+
     <script>
         function openTab(evt, tabName) {
             var i, tabcontent, tablinks;
@@ -94,67 +296,14 @@
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
-            tablinks = document.getElementsByTagName("button");
+            tablinks = document.getElementsByClassName("tablink");
             for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.classList.add("active");
-        }
-
-        function visualizarArquivos() {
-            const arquivos = ['arquivo1.pdf', 'arquivo2.docx']; // Exemplo de arquivos já cadastrados
-            if (arquivos.length > 0) {
-                alert('Arquivos cadastrados: \n' + arquivos.join('\n'));
-            } else {
-                alert('Nenhum arquivo cadastrado.');
-            }
+            evt.currentTarget.className += " active";
         }
     </script>
-</head>
-<body>
-    <div class="header">
-        <div class="site-title">CampusLink - Disciplina</div>
-    </div>
 
-    <div class="container">
-        <div class="tab">
-            <button class="tablink active" onclick="openTab(event, 'links')">Links</button>
-            <button class="tablink" onclick="openTab(event, 'artigos')">Artigos</button>
-            <button class="tablink" onclick="openTab(event, 'atividades')">Atividades</button>
-            <button class="tablink" onclick="openTab(event, 'comentarios')">Comentários</button>
-        </div>
-
-        <div id="links" class="tab-content active">
-            <h2>Compartilhar Links</h2>
-            <input type="text" placeholder="Título do link">
-            <input type="url" placeholder="Cole o link aqui">
-            <button class="publish-btn">Publicar Link</button>
-        </div>
-
-        <div id="artigos" class="tab-content">
-            <h2>Compartilhar Artigos</h2>
-            <input type="text" placeholder="Título do artigo">
-            <input type="file" accept=".pdf, .doc, .docx" placeholder="Carregar arquivo">
-            <button class="publish-btn">Publicar Artigo</button>
-        </div>
-
-        <div id="atividades" class="tab-content">
-            <h2>Compartilhar Atividades</h2>
-            <input type="text" placeholder="Título da atividade">
-            <input type="file" accept=".pdf, .doc, .docx" placeholder="Carregar arquivo">
-            <button class="publish-btn">Publicar Atividade</button>
-        </div>
-
-        <div id="comentarios" class="tab-content">
-            <h2>Comentários</h2>
-            <textarea placeholder="Escreva seu comentário aqui" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 10px; border: none; height: 150px;"></textarea>
-            <button class="publish-btn">Publicar Comentário</button>
-        </div>        
-
-        <div style="text-align:center; margin-top: 20px;">
-            <button class="publish-btn" onclick="visualizarArquivos()">Visualizar Arquivos</button>
-        </div>
-    </div>
 </body>
 </html>

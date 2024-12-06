@@ -39,7 +39,7 @@
             cursor: pointer;
             color: white;
             transition: background-color 0.3s;
-            text-decoration: none; 
+            text-decoration: none;
         }
         .settings-btn:hover {
             background-color: rgba(255, 255, 255, 0.2);
@@ -136,14 +136,17 @@
             document.getElementById('disciplina-input').style.display = 'block';
         }
 
+
         function addDisciplina() {
             var disciplinaNome = document.querySelector('#disciplina-name').value;
             var disciplinaDesc = document.querySelector('#disciplina-desc').value;
+
 
             if (disciplinaNome.trim() === "") {
                 alert("O nome da disciplina não pode estar vazio.");
                 return;
             }
+
 
             var newDisciplina = document.createElement('div');
             newDisciplina.className = 'disciplina';
@@ -152,6 +155,7 @@
                 <p>${disciplinaDesc}</p>
                 <a href="disciplina.html">Acessar</a>
             `;
+
 
             document.querySelector('.feed').appendChild(newDisciplina);
             document.querySelector('#disciplina-name').value = '';
@@ -190,3 +194,5 @@
     </div>    
 </body>
 </html>
+
+

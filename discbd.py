@@ -1,30 +1,61 @@
 import sqlite3
 import os
 
-def get_db_connection():
-    """Conecta ao banco de dados de disciplinas."""
-    conn = sqlite3.connect(os.path.join('database', 'disciplinas.db'))  # Ajuste o caminho se necessário
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def visualizar_disciplinas():
-    """Visualiza as disciplinas no banco de dados."""
-    conn = get_db_connection()
+# Função para recuperar as disciplinas
+def get_disciplinas():
+    database_path = os.path.join('database', 'disciplinas.db')
+    conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
 
-    # Buscar todas as disciplinas
-    cursor.execute('SELECT * FROM disciplinas')
+    cursor.execute(''' 
+        SELECT * FROM disciplinas 
+    ''')
     disciplinas = cursor.fetchall()
 
-    # Exibir as disciplinas
+    conn.close()
+    return disciplinas
+
+# Função para recuperar publicações de uma disciplina específica
+def get_publicacoes(disciplina_id):
+    database_path = os.path.join('database', 'disciplinas.db')
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+
+    cursor.execute(''' 
+        SELECT * FROM publicacoes WHERE disciplina_id = ? 
+    ''', (disciplina_id,))
+    publicacoes = cursor.fetchall()
+
+    conn.close()
+    return publicacoes
+
+# Função para exibir as disciplinas e suas publicações
+def visualizar_disciplinas_e_publicacoes():
+    disciplinas = get_disciplinas()
+    
     if disciplinas:
-        print("Disciplinas:")
         for disciplina in disciplinas:
-            print(f"ID: {disciplina['id']}, Nome: {disciplina['nome']}, Descrição: {disciplina['descricao']}")
+            print(f"ID: {disciplina[0]}")
+            print(f"Nome: {disciplina[1]}")
+            print(f"Descrição: {disciplina[2]}")
+            print("Publicações:")
+            
+            publicacoes = get_publicacoes(disciplina[0])
+            if publicacoes:
+                for pub in publicacoes:
+                    print(f"  ID: {pub[0]}")
+                    print(f"  Tipo: {pub[1]}")
+                    print(f"  Título: {pub[2]}")
+                    print(f"  Conteúdo: {pub[3]}")
+                    if pub[4]:
+                        print(f"  Arquivo: {pub[4]}")
+                    print("-" * 40)
+            else:
+                print("  Nenhuma publicação encontrada para esta disciplina.")
+            print("=" * 40)
     else:
         print("Nenhuma disciplina encontrada.")
 
-    conn.close()
-
-if __name__ == "__main__":
-    visualizar_disciplinas()
+# Exemplo de chamada para visualizar as disciplinas e publicações
+if __name__ == '__main__':
+    visualizar_disciplinas_e_publicacoes()
