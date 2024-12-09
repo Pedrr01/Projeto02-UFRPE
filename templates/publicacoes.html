@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusLink - Publicações</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-image: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71));
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+        .header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+        }
+        .item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .item a {
+            color: #f0f0f0;
+            text-decoration: none;
+        }
+    </style>
+    <script>
+        // Função para exibir publicações do localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            let publicacoes = JSON.parse(localStorage.getItem('publicacoes')) || [];
+            let container = document.querySelector('.container');
+
+            if (publicacoes.length === 0) {
+                container.innerHTML = '<p>Nenhuma publicação disponível.</p>';
+                return;
+            }
+
+            publicacoes.forEach(publicacao => {
+                let item = document.createElement('div');
+                item.classList.add('item');
+
+                let titulo = document.createElement('h3');
+                titulo.textContent = publicacao.titulo;
+                item.appendChild(titulo);
+
+                if (publicacao.tipo === 'link') {
+                    let link = document.createElement('a');
+                    link.href = publicacao.conteudo;
+                    link.target = "_blank";
+                    link.textContent = "Acessar Link";
+                    item.appendChild(link);
+                } else if (publicacao.tipo === 'comentario') {
+                    let comentario = document.createElement('p');
+                    comentario.textContent = publicacao.conteudo;
+                    item.appendChild(comentario);
+                } else if (publicacao.tipo === 'arquivo') {
+                    let linkArquivo = document.createElement('a');
+                    linkArquivo.href = publicacao.conteudo;
+                    linkArquivo.target = "_blank";
+                    linkArquivo.textContent = "Baixar Arquivo";
+                    item.appendChild(linkArquivo);
+                }
+
+                container.appendChild(item);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>CampusLink - Publicações</h1>
+    </div>
+    <div class="container"></div>
+</body>
+</html>

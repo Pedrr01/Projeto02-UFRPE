@@ -279,6 +279,14 @@ def disciplina():
 
     return render_template('disciplina.html', publicacoes=publicacoes, erro=erro, sucesso=sucesso)
 
+@app.route('/disciplinas')
+def disciplinas():
+    return render_template('disciplina.html')
+
+# Rota para a página de Publicações
+@app.route('/publicacoes')
+def publicacoes():
+    return render_template('publicacoes.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
