@@ -55,9 +55,12 @@
         <form action="{{ url_for('edit', user_id=user['id']) }}" method="post">
             <input type="text" name="name" value="{{ user['name'] }}" placeholder="Nome" required>
             <input type="email" name="email" value="{{ user['email'] }}" placeholder="E-mail" required>
-            <input type="password" name="password" placeholder="Nova Senha" required>
+            <input type="password" name="old_password" placeholder="Senha Antiga" required>
+            <input type="password" name="new_password" placeholder="Nova Senha" required>
+            <input type="password" name="confirm_password" placeholder="Confirmar Nova Senha" required>
+            {% if error %}
+                <p style="color: red;">{{ error }}</p>
+            {% endif %}
             <button type="submit">Salvar Alterações</button>
         </form>
-    </div>
-</body>
-</html>
+        
