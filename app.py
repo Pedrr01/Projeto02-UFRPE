@@ -8,9 +8,9 @@ app.secret_key = '1110'
 # Função para conectar ao banco de dados de usuários
 def get_db_connection():
     conn = MySQLdb.connect(
-        host='34.95.244.104',  # Endereço do servidor MySQL
-        user='Feellype',       # Nome de usuário
-        password='13020101',   # Senha
+        host='campuslink.cnaw2608ajs2.us-east-1.rds.amazonaws.com',  # Endereço do servidor MySQL
+        user='CampusLink',       # Nome de usuário
+        password='13020101',     # Senha
         database='campuslink_integrado'  # Nome do banco de dados
     )
     conn.autocommit = True
@@ -19,9 +19,9 @@ def get_db_connection():
 # Função para conectar ao banco de dados de disciplinas
 def get_disciplina_db_connection():
     conn = MySQLdb.connect(
-        host='34.95.244.104',  # Endereço do servidor MySQL
-        user='Feellype',       # Nome de usuário
-        password='13020101',   # Senha
+        host='campuslink.cnaw2608ajs2.us-east-1.rds.amazonaws.com',  # Endereço do servidor MySQL
+        user='CampusLink',       # Nome de usuário
+        password='13020101',     # Senha
         database='campuslink_integrado'  # Nome do banco de dados
     )
     conn.autocommit = True
@@ -92,11 +92,11 @@ def feed():
     cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
 
     if request.method == 'POST':
-        nome = request.form.get('disciplina_name')
+        name = request.form.get('disciplina_name')
         descricao = request.form.get('disciplina_desc')
 
-        if nome:
-            cursor.execute('INSERT INTO disciplinas (nome, descricao) VALUES (%s, %s)', (nome, descricao))
+        if name:
+            cursor.execute('INSERT INTO disciplinas (name, descricao) VALUES (%s, %s)', (name, descricao))
             conn.commit()
 
     cursor.execute('SELECT * FROM disciplinas')
@@ -115,7 +115,8 @@ def dashboard(user_id):
             cursor.execute('DELETE FROM users WHERE id = %s', (user_id,))
             conn.commit()
             conn.close()
-            return redirect(url_for('index'))
+            session.pop('user_id', None)  # Remover o usuário da sessão após a exclusão
+            return redirect(url_for('index'))  # Redirecionar para a página inicial
 
     cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))
     user = cursor.fetchone()

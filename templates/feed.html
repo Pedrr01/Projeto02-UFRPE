@@ -7,6 +7,7 @@
     <link rel="icon" href="img/iconNav.png" type="image/x-icon">
     <title>Campus Link - UFRPE</title>
     <style>
+        /* Estilos conforme já fornecido */
         body {
             font-family: Arial, Helvetica, sans-serif;
             background-image: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71));
@@ -135,33 +136,6 @@
         function showDisciplinaInput() {
             document.getElementById('disciplina-input').style.display = 'block';
         }
-
-
-        function addDisciplina() {
-            var disciplinaNome = document.querySelector('#disciplina-name').value;
-            var disciplinaDesc = document.querySelector('#disciplina-desc').value;
-
-
-            if (disciplinaNome.trim() === "") {
-                alert("O nome da disciplina não pode estar vazio.");
-                return;
-            }
-
-
-            var newDisciplina = document.createElement('div');
-            newDisciplina.className = 'disciplina';
-            newDisciplina.innerHTML = `
-                <h3>${disciplinaNome}</h3>
-                <p>${disciplinaDesc}</p>
-                <a href="disciplina.html">Acessar</a>
-            `;
-
-
-            document.querySelector('.feed').appendChild(newDisciplina);
-            document.querySelector('#disciplina-name').value = '';
-            document.querySelector('#disciplina-desc').value = '';
-            document.getElementById('disciplina-input').style.display = 'none';
-        }
     </script>
 </head>
 <body>
@@ -175,7 +149,7 @@
         <div class="feed">
             {% for disciplina in disciplinas %}
                 <div class="disciplina">
-                    <h3>{{ disciplina['nome'] }}</h3>
+                    <h3>{{ disciplina['name'] }}</h3>
                     <p>{{ disciplina['descricao'] }}</p>
                     <a href="{{ url_for('disciplina') }}">Acessar</a>
                 </div>
@@ -186,7 +160,7 @@
             <div id="disciplina-input" class="disciplina-input" style="display: none;">
                 <form method="POST" action="{{ url_for('feed') }}">
                     <input type="text" name="disciplina_name" placeholder="Nome da Disciplina" required>
-                    <textarea name="disciplina_desc" placeholder="Descrição"></textarea>
+                    <textarea name="disciplina_desc" placeholder="Descrição" required></textarea>
                     <button type="submit">Cadastrar</button>
                 </form>
             </div>
@@ -194,5 +168,3 @@
     </div>    
 </body>
 </html>
-
-

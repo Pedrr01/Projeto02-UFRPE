@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $host = 'localhost';
         $banco = 'campuslink_integrado';
-        $user = 'Feellype';
+        $user = 'CampusLink';
         $senha_banco = '13020101'; // Coloque a senha correta aqui
 
         // Conexão com o banco de dados

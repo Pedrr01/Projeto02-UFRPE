@@ -24,36 +24,36 @@
             color: white;
             text-align: center;
         }
-        a{
+        a {
             background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
             border: none;
             padding: 15px;
-            width: 240px; /* Ensure width fits within the container */
+            width: 240px;
             border-radius: 10px;
             color: rgb(255, 255, 255);
             font-size: 15px;
             margin-bottom: 10px;
-            display: inline-block; /* Ensure consistent behavior */
-            text-decoration: none; /* Remove underline for links */
-
-        } button {
+            display: inline-block;
+            text-decoration: none;
+        }
+        button {
             background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
             border: none;
             padding: 15px;
-            width: 200px; /* Ensure width fits within the container */
+            width: 200px;
             border-radius: 10px;
             color: rgb(255, 255, 255);
             font-size: 15px;
             margin-bottom: 10px;
-            display: inline-block; /* Ensure consistent behavior */
-            text-decoration: none; /* Remove underline for links */
+            display: inline-block;
+            text-decoration: none;
         }
         a:hover, button:hover {
             cursor: pointer;
             background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
         }
         button {
-            width: calc(100% - 30px); /* Ensure width fits within the container */
+            width: calc(100% - 30px);
         }
         p {
             margin: 20px 0;
@@ -62,11 +62,15 @@
 </head>
 <body>
     <div class="container">
-        <h2>Olá, {{ user['name'] }}</h2>
-        <a href="{{ url_for('edit', user_id=user['id']) }}">Editar Perfil</a>
-        <form action="{{ url_for('dashboard', user_id=user['id']) }}" method="post" style="margin-top: 20px;">
-            <button type="submit" name="delete">Excluir Conta</button>
-        </form>
+        {% if user %}
+            <h2>Olá, {{ user['name'] }}</h2>
+            <a href="{{ url_for('edit', user_id=user['id']) }}">Editar Perfil</a>
+            <form action="{{ url_for('dashboard', user_id=user['id']) }}" method="post" style="margin-top: 20px;">
+                <button type="submit" name="delete">Excluir Conta</button>
+            </form>
+        {% else %}
+            <p>Usuário não encontrado.</p>
+        {% endif %}
     </div>
 </body>
 </html>
