@@ -106,6 +106,19 @@
         .visualizar-btn-container button:hover {
             background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
         }
+        .back-button {
+            background-image: linear-gradient(to right, rgb(120, 120, 120), rgb(170, 170, 170));
+            margin-top: 20px;
+            padding: 10px 20px;
+            width: 240px;
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-image: linear-gradient(to right, rgb(100, 100, 100), rgb(150, 150, 150));
+        }
     </style>
     <script>
         // Função para armazenar publicações no localStorage
@@ -211,7 +224,10 @@
 
         <div class="visualizar-btn-container">
             <button onclick="window.location.href='/publicacoes';">Visualizar Publicações</button>
-        </div>        
+        </div>
+
+        <!-- Botão de Voltar -->
+        <button class="back-button" onclick="window.history.back()">Voltar</button>
     </div>
 </body>
 </html>

@@ -24,53 +24,59 @@
             color: white;
             text-align: center;
         }
-        a {
+        a{
             background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
             border: none;
             padding: 15px;
-            width: 240px;
+            width: 240px; /* Ensure width fits within the container */
             border-radius: 10px;
             color: rgb(255, 255, 255);
             font-size: 15px;
             margin-bottom: 10px;
-            display: inline-block;
-            text-decoration: none;
+            display: inline-block; /* Ensure consistent behavior */
+            text-decoration: none; /* Remove underline for links */
         }
         button {
             background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
             border: none;
             padding: 15px;
-            width: 200px;
+            width: 200px; /* Ensure width fits within the container */
             border-radius: 10px;
             color: rgb(255, 255, 255);
             font-size: 15px;
             margin-bottom: 10px;
-            display: inline-block;
-            text-decoration: none;
+            display: inline-block; /* Ensure consistent behavior */
+            text-decoration: none; /* Remove underline for links */
         }
         a:hover, button:hover {
             cursor: pointer;
             background-image: linear-gradient(to right, rgb(0, 80, 172), rgb(80, 19, 195));
         }
         button {
-            width: calc(100% - 30px);
+            width: calc(100% - 30px); /* Ensure width fits within the container */
         }
         p {
             margin: 20px 0;
+        }
+        .back-button {
+            background-image: linear-gradient(to right, rgb(120, 120, 120), rgb(170, 170, 170));
+            margin-top: 10px;
+            width: 240px;
+        }
+        .back-button:hover {
+            background-image: linear-gradient(to right, rgb(100, 100, 100), rgb(150, 150, 150));
         }
     </style>
 </head>
 <body>
     <div class="container">
-        {% if user %}
-            <h2>Olá, {{ user['name'] }}</h2>
-            <a href="{{ url_for('edit', user_id=user['id']) }}">Editar Perfil</a>
-            <form action="{{ url_for('dashboard', user_id=user['id']) }}" method="post" style="margin-top: 20px;">
-                <button type="submit" name="delete">Excluir Conta</button>
-            </form>
-        {% else %}
-            <p>Usuário não encontrado.</p>
-        {% endif %}
+        <h2>Olá, {{ user['name'] }}</h2>
+        <a href="{{ url_for('edit', user_id=user['id']) }}">Editar Perfil</a>
+        <form action="{{ url_for('dashboard', user_id=user['id']) }}" method="post" style="margin-top: 20px;">
+            <button type="submit" name="delete">Excluir Conta</button>
+        </form>
+        <!-- Botão de voltar para a página anterior -->
+        <button type="button" class="back-button" onclick="window.history.back()">Voltar</button>
     </div>
 </body>
 </html>

@@ -8,10 +8,10 @@ app.secret_key = '1110'
 # Função para conectar ao banco de dados de usuários
 def get_db_connection():
     conn = MySQLdb.connect(
-        host='campuslink.cnaw2608ajs2.us-east-1.rds.amazonaws.com',  # Endereço do servidor MySQL
-        user='CampusLink',       # Nome de usuário
-        password='13020101',     # Senha
-        database='campuslink_integrado'  # Nome do banco de dados
+        host='campuslink.cnaw2608ajs2.us-east-1.rds.amazonaws.com',
+        user='CampusLink',
+        password='13020101',
+        database='campuslink_integrado'
     )
     conn.autocommit = True
     return conn
@@ -19,10 +19,10 @@ def get_db_connection():
 # Função para conectar ao banco de dados de disciplinas
 def get_disciplina_db_connection():
     conn = MySQLdb.connect(
-        host='campuslink.cnaw2608ajs2.us-east-1.rds.amazonaws.com',  # Endereço do servidor MySQL
-        user='CampusLink',       # Nome de usuário
-        password='13020101',     # Senha
-        database='campuslink_integrado'  # Nome do banco de dados
+        host='campuslink.cnaw2608ajs2.us-east-1.rds.amazonaws.com',
+        user='CampusLink',
+        password='13020101',
+        database='campuslink_integrado'
     )
     conn.autocommit = True
     return conn
@@ -43,7 +43,7 @@ def register():
         periodo = request.form['periodo']
 
         conn = get_db_connection()
-        cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
+        cursor = conn.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
         user = cursor.fetchone()
 
@@ -70,7 +70,7 @@ def login():
     email = request.form['email']
     password = request.form['password']
     conn = get_db_connection()
-    cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
+    cursor = conn.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password))
     user = cursor.fetchone()
     conn.close()
@@ -89,7 +89,7 @@ def feed():
 
     user_id = session['user_id']
     conn = get_disciplina_db_connection()
-    cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
+    cursor = conn.cursor(MySQLdb.cursors.DictCursor)
 
     if request.method == 'POST':
         name = request.form.get('disciplina_name')
@@ -107,7 +107,7 @@ def feed():
 @app.route('/dashboard/<int:user_id>', methods=['GET', 'POST'])
 def dashboard(user_id):
     conn = get_db_connection()
-    cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
+    cursor = conn.cursor(MySQLdb.cursors.DictCursor)
     if request.method == 'POST':
         if 'edit' in request.form:
             return redirect(url_for('edit', user_id=user_id))
@@ -126,7 +126,7 @@ def dashboard(user_id):
 @app.route('/edit/<int:user_id>', methods=['GET', 'POST'])
 def edit(user_id):
     conn = get_db_connection()
-    cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
+    cursor = conn.cursor(MySQLdb.cursors.DictCursor)
 
     if request.method == 'POST':
         name = request.form['name']
@@ -166,7 +166,7 @@ def admin():
         return redirect(url_for('index'))
 
     conn = get_db_connection()
-    cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
+    cursor = conn.cursor(MySQLdb.cursors.DictCursor)
 
     cursor.execute('SELECT * FROM users WHERE id = %s', (session['user_id'],))
     user = cursor.fetchone()
@@ -206,7 +206,7 @@ def logout():
 @app.route('/disciplina', methods=['GET', 'POST'])
 def disciplina():
     conn = get_disciplina_db_connection()
-    cursor = conn.cursor(MySQLdb.cursors.DictCursor)  # Correção aqui
+    cursor = conn.cursor(MySQLdb.cursors.DictCursor)
 
     erro = None
     sucesso = None
@@ -243,42 +243,22 @@ def disciplina():
                         )
                 elif tipo == "arquivo":
                     if arquivo and arquivo.filename:
-                        uploads_dir = os.path.join('static', 'uploads')
-                        os.makedirs(uploads_dir, exist_ok=True)
-
-                        caminho_arquivo = os.path.join(uploads_dir, arquivo.filename)
-                        arquivo.save(caminho_arquivo)
-
+                        filename = os.path.join('uploads', arquivo.filename)
+                        arquivo.save(filename)
                         cursor.execute(
-                            'INSERT INTO publicacoes (tipo, titulo, conteudo, arquivo) VALUES (%s, %s, %s, %s)',
-                            (tipo, titulo or "Sem título", conteudo, caminho_arquivo)
+                            'INSERT INTO publicacoes (tipo, titulo, conteudo) VALUES (%s, %s, %s)',
+                            (tipo, titulo or "Sem título", filename)
                         )
-                    else:
-                        erro = "Por favor, envie um arquivo válido."
-                else:
-                    erro = "Tipo de publicação inválido."
-
-                if erro is None:
-                    conn.commit()
-                    sucesso = "Publicação feita com sucesso!"
-            except MySQLdb.Error as e:
-                erro = f"Erro no banco de dados: {str(e)}"
             except Exception as e:
-                erro = f"Erro ao processar a publicação: {str(e)}"
+                erro = f"Erro ao publicar: {str(e)}"
+            else:
+                sucesso = "Publicação realizada com sucesso!"
 
     cursor.execute('SELECT * FROM publicacoes')
     publicacoes = cursor.fetchall()
     conn.close()
 
-    return render_template('disciplina.html', publicacoes=publicacoes, erro=erro, sucesso=sucesso)
-
-@app.route('/disciplinas')
-def disciplinas():
-    return render_template('disciplina.html')
-
-@app.route('/publicacoes')
-def publicacoes():
-    return render_template('publicacoes.html')
+    return render_template('disciplina.html', erro=erro, sucesso=sucesso, publicacoes=publicacoes)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -23,7 +23,7 @@
             background-color: rgba(0, 0, 0, 0.6);
             padding: 15px;
             border-radius: 15px;
-            width: 20%;
+            width: 40%; /* Ajustei para mais espaço */
             text-align: center;
         }
         .profile-picture {
@@ -135,6 +135,8 @@
                 <input type="file" name="profile_picture" accept="image/*" onchange="loadFile(event)">
             </div>
             <br>
+
+            <!-- Campos do Usuário -->
             <div class="caixaInput">
                 <input type="text" name="name" id="nome" class="inputUsuario" value="{{ name if name else '' }}" required>
                 <label for="nome" class="labelInput">Nome de Usuário</label>
@@ -161,6 +163,8 @@
                 {% endif %}
             </div>
             <br><br>
+            
+            <!-- Campos adicionais -->
             <div class="caixaInput">
                 <input type="text" name="faculdade" id="faculdade" class="inputUsuario" value="{{ faculdade if faculdade else '' }}" required>
                 <label for="faculdade" class="labelInput">Faculdade</label>
@@ -176,6 +180,8 @@
                 <label for="periodo" class="labelInput">Período</label>
             </div>
             <br><br>
+            
+            <!-- Botão de Cadastro -->
             <input type="submit" name="botaoCadastrar" id="botaoCadastrar" value="Cadastrar">
         </form>
         <div class="containerAncora">
