@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import MySQLdb
 import os
+import smtplib
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 app.secret_key = '1110'
@@ -30,6 +32,25 @@ def get_disciplina_db_connection():
 @app.route('/')
 def index():
     return render_template('index.html')
+def send_email(to_email):
+    subject = "Cadastro realizado com sucesso"
+    body = "Cadastro realizado com sucesso, seja bem-vindo à plataforma CampusLink"
+    sender_email = "campuslink2025@gmail.com"  
+    sender_password = "odsk ptio tofb leqq"  
+    
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = sender_email
+    msg['To'] = to_email
+    
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, to_email, msg.as_string())
+        server.quit()
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -58,6 +79,9 @@ def register():
                        (name, email, password, faculdade, curso, periodo))
         conn.commit()
         conn.close()
+        
+        send_email(email)  # Envia o e-mail após o cadastro
+        
         return redirect(url_for('success'))
     return render_template('forms.html')
 
